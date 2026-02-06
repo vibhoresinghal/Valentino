@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A Letter for You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Instrument Serif", serif;
+        }
+
+        .device-frame {
+            width: 390px;
+            height: 844px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            background: #000;
+        }
+
+        .background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("assets/background.png") center / cover no-repeat;
+            opacity: 1;
+            z-index: 0;
+        }
+
+        #letter-reveal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            pointer-events: auto;
+            padding: 60px 20px 80px;
+            /* 60px top spacing */
+        }
+
+        #letter-reveal::-webkit-scrollbar {
+            display: none;
+        }
+
+        #letter-reveal img {
+            width: 350px;
+            /* Fixed width to keep letter shape */
+            height: auto;
+            position: absolute;
+            top: 60px;
+            /* 60px from top of screen */
+            left: 50%;
+            transform: translateX(-50%) scale(0.9) translateY(20px);
+            z-index: 1;
+            opacity: 0;
+        }
+
+        #letter-message {
+            position: relative;
+            z-index: 2;
+            width: 320px;
+            /* Constrain text to letter width */
+            margin-top: 0;
+            /* Pushed by parent padding */
+            /* Match background top */
+            padding: 60px 20px 20px 20px;
+            text-align: left;
+            color: #983A68;
+            font-family: 'Source Serif 4', serif;
+            opacity: 0;
+        }
+
+        .message-body {
+            font-size: 14px;
+            line-height: 32px;
+            /* Ruled Paper Effect */
+            background-image: linear-gradient(rgba(213, 132, 162, 0.15) 1px, transparent 1px);
+            background-size: 100% 32px;
+            background-position: 0 28px;
+        }
+
+        .message-body p {
+            margin: 0;
+            margin-bottom: 32px;
+        }
+
+        .message-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pixel-logo {
+            display: block;
+            margin: 470px auto 20px;
+            width: 200px;
+            height: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .letter-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 80px;
+            /* Extra space at bottom of scroll */
+        }
+
+        .footer-prefix {
+            font-family: "Source Serif 4", serif;
+            color: #D584A2;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .footer-name {
+            font-family: "MonteCarlo", cursive;
+            color: #983A68;
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .highlight {
+            font-weight: 900;
+            color: #7A2B53;
+        }
+
+        .serif {
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+        }
+
+        .letter-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            /* Space between header and message */
+            position: relative;
+        }
+
+        .my-dear {
+            font-family: "Playfair Display", serif;
+            color: #D584A2;
+            font-size: 20px;
+            margin-bottom: -5px;
+        }
+
+        .name-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .cursive-name {
+            font-family: "MonteCarlo", cursive;
+            color: #983A68;
+            font-size: 36px;
+            line-height: 1;
+        }
+
+        .intro-heart {
+            color: #FFC7F2;
+            font-size: 18px;
+            filter: blur(0.5px);
+            opacity: 0.8;
+            margin-top: -10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="device-frame">
+        <div class="background-wrapper"></div>
+
+        <div id="letter-reveal">
+            <img src="assets/Letter.svg" alt="Letter Background">
+            <div id="letter-message">
+                <div class="letter-header">
+                    <span class="my-dear">My dear,</span>
+                    <div class="name-container">
+                        <span class="intro-heart">♥</span>
+                        <span class="cursive-name">Anoop</span>
+                        <span class="intro-heart">♥</span>
+                    </div>
+                </div>
+                <div class="message-body">
+                    <p>
+                        Watching you collect <span class="highlight">₹250 Cashback</span> <br>
+                        this year was impressive, but I wish <br>
+                        more for you. Let’s get together & <br>
+                        earn up to <span class="highlight">₹7,000</span> every year.
+                    </p>
+                    <p>
+                        We can also earn <span class="highlight">3% cashback</span> on <br>
+                        everything we buy together
+                    </p>
+                    <p>
+                        Hope you like me in all of my unique <br>
+                        shape and colours.
+                    </p>
+                    <img src="assets/Pixel.png" class="pixel-logo" alt="Pixel">
+                    <div class="letter-footer">
+                        <span class="footer-prefix">- Your secret admirer</span>
+                        <span class="footer-name">Pixel Credit Card</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script>
+        // Premium stagger fade in
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline({ delay: 0.5 });
+
+            tl.to('#letter-reveal img', {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                xPercent: -50, // Keep centered while animating
+                duration: 1.5,
+                ease: 'expo.out'
+            })
+                .to('#letter-message', {
+                    opacity: 1,
+                    duration: 1.2,
+                    ease: 'power2.out'
+                }, '-=0.8');
+        });
+    </script>
+</body>
+
+</html>

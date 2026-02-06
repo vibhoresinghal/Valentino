@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Valentino Intro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=MonteCarlo&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --anim-duration: 4s;
+            --scene-2-delay: 3.5s;
+            --scene-3-delay: 7s;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Instrument Serif", serif;
+        }
+
+        .device-frame {
+            width: 390px;
+            height: 844px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            background: #000;
+            /* Darker base for space feel */
+            perspective: 1200px;
+            perspective-origin: 50% 50%;
+        }
+
+        .background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("assets/background.png") center / cover no-repeat;
+            opacity: 1;
+            z-index: 0;
+        }
+
+        /* Scene Container */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            transform-style: preserve-3d;
+            z-index: 3;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        /* GSAP handles all animations - keeping static styles only */
+
+        /* Asset Styling */
+        .floating-asset {
+            position: absolute;
+            transform-origin: center;
+            opacity: 0;
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            /* Start hidden, animation will reveal */
+        }
+
+        .anim-group {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+        }
+
+        /* Typography */
+        h1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            text-align: center;
+            color: #ff4081;
+            /* Pinkish color */
+            font-style: italic;
+            font-weight: 400;
+            font-size: 36px;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(255, 64, 129, 0.3);
+            white-space: nowrap;
+            opacity: 0;
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+            /* Start hidden */
+        }
+
+        .scene-2 h1 {
+            background: linear-gradient(180deg, #ff80ab 0%, #ff4081 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+        }
+
+        /* ========================================
+           SCENE 1 ASSETS - CONTROL CENTER
+           ========================================
+           Adjust these values to control positioning and size:
+           - top/bottom/left/right: Position from edges
+           - width: Size of the asset (height scales proportionally)
+           
+           Assets:
+           - s1-g1: Gift box (top-left)
+           - s1-g2: Heart balloon (right side)
+           - s1-g3: Flower bouquet (bottom-left)
+        */
+        .s1-g1 {
+            top: 90px;
+            /* Distance from top */
+            left: -120px;
+            /* Distance from left (negative = overflow) */
+            width: 300px;
+            /* Size of gift box */
+        }
+
+        .s1-g2 {
+            top: 35%;
+            /* Vertical position (percentage) */
+            right: -120px;
+            /* Distance from right */
+            width: 300px;
+        }
+
+        .s1-g3 {
+            bottom: 40px;
+            /* Distance from bottom */
+            left: -180px;
+            /* Distance from left (negative = overflow) */
+            width: 400px;
+            /* Size of flower bouquet */
+        }
+
+        /* Scene 2 Assets */
+        .s2-g4 {
+            top: 20%;
+            right: -150px;
+            width: 250px;
+        }
+
+        .s2-g5 {
+            bottom: 20px;
+            right: -120px;
+            width: 280px;
+        }
+
+        .s2-g6 {
+            bottom: 5%;
+            left: -100px;
+            width: 200px;
+        }
+
+        .s2-g7 {
+            top: -50px;
+            left: -120px;
+            width: 300px;
+        }
+
+        /* Clouds Foreground Control */
+        .cloud {
+            position: absolute;
+            z-index: -2;
+            pointer-events: none;
+            opacity: 0;
+            filter: blur(8px);
+            transform-style: preserve-3d;
+            will-change: transform, opacity, filter;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+        }
+
+        .c1 {
+            bottom: 50px;
+            left: -80px;
+            width: 450px;
+        }
+
+        .c2 {
+            bottom: 100px;
+            right: -80px;
+            width: 400px;
+        }
+
+        /* Scene 3: CSS Envelope */
+        .scene-3 {
+            pointer-events: auto;
+            /* Allow interaction */
+            cursor: pointer;
+        }
+
+        .envelope-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 280px;
+            /* Controls spacing between Tap and to open */
+            height: 100vh;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .tap-word {
+            position: relative;
+            top: auto;
+            left: auto;
+            transform: none;
+            font-size: 56px;
+            color: #ff4081;
+            margin: 0;
+            opacity: 0;
+            filter: blur(10px);
+            z-index: 5;
+            text-align: center;
+        }
+
+        .lottie-envelope {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 360px;
+            height: 50vh;
+            z-index: 1;
+            transform-origin: center center;
+            border: 2px solid red;
+            pointer-events: auto;
+        }
+
+        /* Letter Reveal Container */
+        .letter-message {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            pointer-events: auto;
+            padding: 60px 20px 80px;
+            opacity: 0;
+            transform: translateY(-100%);
+            filter: blur(10px);
+        }
+
+        .letter-message::-webkit-scrollbar {
+            display: none;
+        }
+
+        .letter-message img.letter-bg {
+            width: 350px;
+            height: auto;
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9) translateY(20px);
+            z-index: 1;
+            opacity: 0;
+        }
+
+        .letter-content {
+            position: relative;
+            z-index: 2;
+            width: 320px;
+            margin-top: 0;
+            padding: 60px 20px 20px 20px;
+            text-align: left;
+            color: #983A68;
+            font-family: 'Source Serif 4', serif;
+            opacity: 0;
+        }
+
+        .message-body {
+            font-size: 14px;
+            line-height: 32px;
+            background-image: linear-gradient(rgba(213, 132, 162, 0.15) 1px, transparent 1px);
+            background-size: 100% 32px;
+            background-position: 0 28px;
+        }
+
+        .message-body p {
+            margin: 0;
+            margin-bottom: 32px;
+        }
+
+        .message-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pixel-logo {
+            display: block;
+            margin: 15px auto;
+            width: 300px;
+            height: auto;
+            position: relative;
+            z-index: 1000;
+        }
+
+        .letter-footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            margin-bottom: 80px;
+        }
+
+        .footer-prefix {
+            font-family: "Source Serif 4", serif;
+            color: #D584A2;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .footer-name {
+            font-family: "MonteCarlo", cursive;
+            color: #983A68;
+            font-size: 32px;
+            line-height: 1;
+        }
+
+        .highlight {
+            font-weight: 900;
+            color: #7A2B53;
+        }
+
+        .serif {
+            font-family: "Instrument Serif", serif;
+            font-style: italic;
+        }
+
+        .letter-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .my-dear {
+            font-family: "Playfair Display", serif;
+            color: #D584A2;
+            font-size: 20px;
+            margin-bottom: -5px;
+        }
+
+        .name-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .cursive-name {
+            font-family: "MonteCarlo", cursive;
+            color: #983A68;
+            font-size: 36px;
+            line-height: 1;
+        }
+
+        .intro-heart {
+            color: #FFC7F2;
+            font-size: 18px;
+            filter: blur(0.5px);
+            opacity: 0.8;
+            margin-top: -10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="device-frame" id="app">
+        <div class="background-wrapper"></div>
+
+        <!-- Scene 1 -->
+        <div class="scene scene-1">
+            <div class="anim-group">
+                <h1>Hi<br>Anoop</h1>
+                <img src="assets/g1.png" class="floating-asset s1-g1">
+                <img src="assets/g2.png" class="floating-asset s1-g2">
+                <img src="assets/g3.png" class="floating-asset s1-g3">
+                <!-- Foreground Clouds -->
+                <img src="assets/c1.png" class="cloud c1">
+                <img src="assets/c2.png" class="cloud c2">
+            </div>
+        </div>
+
+        <!-- Scene 2 -->
+        <div class="scene scene-2">
+            <div class="anim-group">
+                <h1>A letter from from your<br>secret admirer</h1>
+                <img src="assets/g4.png" class="floating-asset s2-g4">
+                <img src="assets/g5.png" class="floating-asset s2-g5">
+                <img src="assets/g6.png" class="floating-asset s2-g6">
+                <img src="assets/g7.png" class="floating-asset s2-g7">
+            </div>
+        </div>
+
+        <!-- Scene 3 -->
+        <div class="scene scene-3">
+            <div class="anim-group">
+                <div class="envelope-container">
+                    <h1 class="tap-word tap">Tap</h1>
+                    <div id="lottie-envelope" class="lottie-envelope"></div>
+                    <h1 class="tap-word to-open">to open</h1>
+                </div>
+                <!-- Letter Message (appears after Lottie plays) -->
+                <div class="letter-message" id="letter-message">
+                    <img src="assets/Letter.svg" alt="Letter Background" class="letter-bg">
+                    <div class="letter-content" id="letter-content">
+                        <div class="letter-header">
+                            <span class="my-dear">My dear,</span>
+                            <div class="name-container">
+                                <span class="intro-heart">♥</span>
+                                <span class="cursive-name">Anoop</span>
+                                <span class="intro-heart">♥</span>
+                            </div>
+                        </div>
+                        <div class="message-body">
+                            <p>
+                                Watching you collect <span class="highlight">₹250 Cashback</span> <br>
+                                this year was impressive, but I wish <br>
+                                more for you. Let's get together & <br>
+                                earn up to <span class="highlight">₹7,000</span> every year.
+                            </p>
+                            <p>
+                                We can also earn <span class="highlight">3% cashback</span> on <br>
+                                everything we buy together
+                            </p>
+                            <p>
+                                Hope you like me in all of my unique <br>
+                                shape and colours.
+                            </p>
+                            <img src="assets/Pixel.png" class="pixel-logo" alt="Pixel">
+                            <div class="letter-footer">
+                                <span class="footer-prefix">- Your secret admirer</span>
+                                <span class="footer-name">Pixel Credit Card</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Lottie Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <script>
+        // GSAP Timeline for Star Wars Intro
+        gsap.registerPlugin();
+
+        // Enable GPU acceleration for all animations
+        gsap.config({
+            force3D: true
+        });
+
+        // Initial state - hide everything
+        gsap.set(['.scene-1 h1', '.s1-g1', '.s1-g2', '.s1-g3'], {
+            opacity: 0,
+            scale: 0,
+            z: -1500,
+            filter: 'blur(20px)'
+        });
+
+        gsap.set(['.scene-2 h1', '.s2-g4', '.s2-g5', '.s2-g6', '.s2-g7'], {
+            opacity: 0,
+            scale: 0,
+            z: -1500,
+            filter: 'blur(20px)'
+        });
+
+        gsap.set('.scene-3 .anim-group', {
+            opacity: 0,
+            scale: 0.5,
+            z: -3000,
+            filter: 'blur(40px)'
+        });
+
+        // Lottie starts small
+        gsap.set('.lottie-envelope', {
+            scale: 0.3
+        });
+
+        // Master Timeline
+        const masterTL = gsap.timeline();
+
+        // ===== SCENE 1 =====
+        const scene1TL = gsap.timeline();
+        const s1Elements = ['.scene-1 h1', '.s1-g1', '.s1-g2', '.s1-g3'];
+        const s1Clouds = ['.c1', '.c2'];
+
+        scene1TL
+            // Initial state for items: Deep blur in distance
+            .set(s1Elements, {
+                opacity: 0,
+                z: -2000,
+                scale: 0.3,
+                filter: 'blur(40px)'
+            })
+            // Initial state for clouds: Static in foreground, blurred
+            .set(s1Clouds, {
+                opacity: 0,
+                z: 0,
+                scale: 1,
+                filter: 'blur(15px)'
+            })
+            // Items Journey: Moving through 3D space
+            .to(s1Elements, {
+                z: 1200,
+                scale: 2,
+                duration: 4.5,
+                ease: 'none',
+                stagger: 0.15
+            }, 0)
+            // Clouds: Fade in and become clear (the "come in" part)
+            .to(s1Clouds, {
+                opacity: 0.9,
+                filter: 'blur(0px)',
+                duration: 1.2,
+                stagger: 0.2
+            }, 0.5)
+            // Items: Focus as they reach the screen
+            .to(s1Elements, {
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration: 2.0,
+                ease: 'power2.inOut',
+                stagger: 0.15
+            }, 0)
+            // Final Sequence: Clouds and Objects fly past together
+            .to(s1Clouds, {
+                z: 1000,
+                scale: 5,
+                opacity: 0,
+                filter: 'blur(20px)',
+                duration: 1.8,
+                ease: 'power1.in'
+            }, '-=1.8')
+            .to(s1Elements, {
+                opacity: 0,
+                filter: 'blur(30px)',
+                duration: 1.2,
+                ease: 'power1.in',
+                stagger: 0.15
+            }, '-=1.8');
+
+        // ===== SCENE 2 =====
+        const scene2TL = gsap.timeline();
+        const s2Elements = ['.scene-2 h1', '.s2-g4', '.s2-g5', '.s2-g6', '.s2-g7'];
+
+        scene2TL
+            // Initial state: Same as Scene 1
+            .set(s2Elements, {
+                opacity: 0,
+                z: -2000,
+                scale: 0.3,
+                filter: 'blur(20px)'
+            })
+            // Items Journey: Same as Scene 1
+            .to(s2Elements, {
+                z: 1200,
+                scale: 2,
+                duration: 4.5,
+                ease: 'none',
+                stagger: 0.15
+            }, 0)
+            // Items: Focus as they reach the screen - Same as Scene 1
+            .to(s2Elements, {
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration: 2.0,
+                ease: 'power2.inOut',
+                stagger: 0.15
+            }, 0)
+            // Final Sequence: Blur off - Same as Scene 1
+            .to(s2Elements, {
+                opacity: 0,
+                filter: 'blur(30px)',
+                duration: 1.2,
+                ease: 'power1.in',
+                stagger: 0.15
+            }, '-=1.8');
+
+        // ===== SCENE 3 =====
+        const scene3TL = gsap.timeline();
+
+        scene3TL.to('.scene-3 .anim-group', {
+            opacity: 1,
+            z: 0,
+            scale: 1,
+            filter: 'blur(0px)',
+            duration: 3.5,
+            ease: 'expo.out'
+        })
+            // Scale Lottie to 90% of viewport height (844px * 0.9 / 400px ≈ 1.89)
+            .to('.lottie-envelope', {
+                scale: 1.89,
+                duration: 3.0,
+                ease: 'expo.out'
+            }, 0)
+            .to('.tap-word', {
+                opacity: 1,
+                filter: 'blur(0px)',
+                duration: 1.5,
+                stagger: 0.3,
+                ease: 'power2.out'
+            }, '-=2.0')
+            .add(() => {
+                // Start subtle float animation when scene 3 lands
+                gsap.to('.lottie-envelope', {
+                    y: "-=20px",
+                    duration: 2,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut",
+                    id: "lottieFloat"
+                });
+            });
+
+        // Initialize Lottie Animation (paused until user clicks)
+        const envelopeAnimation = lottie.loadAnimation({
+            container: document.getElementById('lottie-envelope'),
+            renderer: 'svg',
+            loop: false,
+            autoplay: false,
+            path: 'assets/letter.json'
+        });
+
+        // Chain all scenes with better overlap to prevent blinks
+        masterTL
+            .add(scene1TL)
+            .add(scene2TL, '-=1.5')
+            .add(scene3TL, '-=1.2');
+
+        // Click to open envelope - plays the Lottie animation
+        document.querySelector('.scene-3').addEventListener('click', () => {
+            console.log('Open envelope!');
+
+            // Stop the floating nudge
+            gsap.killTweensOf('.lottie-envelope', 'y');
+
+            envelopeAnimation.play();
+
+            // Seamlessly fade and blur out "Tap" and "to open" immediately
+            gsap.to('.tap-word', {
+                opacity: 0,
+                filter: 'blur(20px)',
+                duration: 0.8,
+                ease: 'power2.inOut'
+            });
+        });
+
+        // When Lottie animation finishes, fade in letter
+        envelopeAnimation.addEventListener('complete', () => {
+            console.log('Lottie complete!');
+
+            // Fade out the lottie envelope
+            gsap.to('.lottie-envelope', {
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.out'
+            });
+
+            // Slide in the letter message from top
+            gsap.to('#letter-message', {
+                opacity: 1,
+                y: 0,
+                filter: 'blur(0px)',
+                duration: 0.8,
+                delay: 0.1,
+                ease: 'power1.out'
+            });
+
+            // Animate the letter background SVG
+            gsap.to('.letter-bg', {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                xPercent: -50,
+                duration: 0.8,
+                delay: 0.1,
+                ease: 'power1.out'
+            });
+
+            // Fade in the letter content
+            gsap.to('#letter-content', {
+                opacity: 1,
+                duration: 0.8,
+                delay: 0.1,
+                ease: 'power1.out'
+            });
+        });
+    </script>
+</body>
+
+</html>
